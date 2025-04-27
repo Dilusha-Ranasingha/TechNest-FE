@@ -1,4 +1,4 @@
-# Technest-BF
+# Technest-FE
 
 Technest-BF is a technology skill-sharing social media application. This project is built with a **Spring Boot** backend and a **React Vite** frontend. The application provides a platform for users to share knowledge, ask questions, and interact with a community of tech enthusiasts.
 
