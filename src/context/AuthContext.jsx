@@ -7,7 +7,6 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Load user from localStorage if available
     const storedToken = localStorage.getItem('token');
     const storedRole = localStorage.getItem('role');
     const storedEmail = localStorage.getItem('email');
@@ -16,17 +15,33 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  const login = async (email, password, role) => {
+  const login = async (email, password, expectedRole) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/login', { email, password });
+      // Ensure email and password are strings
+      const emailStr = String(email).trim();
+      const passwordStr = String(password).trim();
+      console.log('AuthContext sending payload:', { email: emailStr, password: passwordStr });
+
+      const response = await axios.post('http://localhost:8080/api/auth/login', {
+        email: emailStr,
+        password: passwordStr
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
       const { token, role: userRole } = response.data;
+      if (expectedRole && userRole !== expectedRole) {
+        throw new Error(`Role mismatch: expected ${expectedRole}, but got ${userRole}`);
+      }
       localStorage.setItem('token', token);
       localStorage.setItem('role', userRole);
-      localStorage.setItem('email', email);
-      setUser({ token, role: userRole, email });
+      localStorage.setItem('email', emailStr);
+      setUser({ token, role: userRole, email: emailStr });
       return true;
     } catch (error) {
-      return false;
+      console.error('AuthContext login error:', error);
+      throw error;
     }
   };
 

@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Swal from 'sweetalert2';
-import axios from 'axios';
 
 function AdminLogin() {
   const [email, setEmail] = useState('');
@@ -11,29 +10,31 @@ function AdminLogin() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
+    if (loading) return; // Prevent double submission
     setLoading(true);
     try {
-      // Log the payload to debug
       console.log('Sending payload:', { email, password });
+      console.log('Email type:', typeof email, 'Value:', email);
+      console.log('Password type:', typeof password, 'Value:', password);
 
-      const response = await axios.post('http://localhost:8080/api/auth/login', {
-        email,
-        password
-      });
-      const { token, role } = response.data;
-      await login({ token, role, email });
-      Swal.fire({
-        title: 'Login Successful',
-        icon: 'success',
-        timer: 1500,
-        showConfirmButton: false,
-        draggable: true
-      });
-      navigate('/admin/dashboard');
+      const success = await login(email, password, 'ADMIN');
+      if (success) {
+        Swal.fire({
+          title: 'Login Successful',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false,
+          draggable: true
+        });
+        navigate('/admin/dashboard');
+      } else {
+        throw new Error('Login failed');
+      }
     } catch (error) {
       console.error('Login error:', error);
+      console.error('Error response:', error.response?.data, 'Status:', error.response?.status);
       Swal.fire({
         title: 'Login Failed',
         text: error.response?.data?.message || 'Invalid credentials',
@@ -43,7 +44,7 @@ function AdminLogin() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [email, password, login, navigate, loading]);
 
   return (
     <div className="container mx-auto p-8">
@@ -55,9 +56,10 @@ function AdminLogin() {
             type="email"
             id="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)} // Ensure e.target.value is a string
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full p-3 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
             required
+            autoComplete="email"
           />
         </div>
         <div className="mb-6">
@@ -66,9 +68,10 @@ function AdminLogin() {
             type="password"
             id="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)} // Ensure e.target.value is a string
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full p-3 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
             required
+            autoComplete="current-password"
           />
         </div>
         <button
