@@ -20,15 +20,38 @@ function Tutorials() {
         );
         setTutorials(response.data);
       } catch (error) {
+        console.error('Error fetching tutorials:', error.response?.data || error.message);
         Swal.fire({
           title: "Failed to load tutorials",
+          text: error.response?.data?.message || "Check your network or token.",
           icon: "error",
           draggable: true
         });
       }
     };
-    fetchTutorials();
-  }, [user.token]);
+
+    const fetchEnrollments = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/user/quizzes/dashboard', {
+          headers: { Authorization: `Bearer ${user.token}` }
+        });
+        const enrolledTutorials = response.data.map(progress => progress.tutorialId);
+        setEnrolledTutorials(enrolledTutorials);
+      } catch (error) {
+        console.error('Error fetching enrollments:', error.response?.data || error.message);
+        Swal.fire({
+          title: "Failed to load enrollments",
+          icon: "error",
+          draggable: true
+        });
+      }
+    };
+
+    if (user && user.token) {
+      fetchTutorials();
+      fetchEnrollments();
+    }
+  }, [user, user.token]);
 
   const handleEnroll = async (tutorialId) => {
     try {
@@ -59,14 +82,16 @@ function Tutorials() {
     <div className="container mx-auto p-8">
       <h2 className="text-3xl font-bold text-cyan-400 mb-8">Available Tutorials</h2>
       {tutorials.length === 0 ? (
-        <p className="text-gray-300 text-center">No tutorials available.</p>
+        <p className="text-gray-300 text-center">No tutorials available or failed to load.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {tutorials.map((tutorial) => (
             <TutorialCard
               key={tutorial.id}
               tutorial={tutorial}
+              userRole={user?.role}
               onEnroll={handleEnroll}
+              isEnrolled={enrolledTutorials.includes(tutorial.id)}
             />
           ))}
         </div>

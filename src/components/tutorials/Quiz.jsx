@@ -21,20 +21,10 @@ function Quiz() {
 
     const fetchTutorial = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/user/quizzes/tutorials', {
+        const response = await axios.get(`http://localhost:8080/api/user/quizzes/tutorials/${tutorialId}`, {
           headers: { Authorization: `Bearer ${user.token}` }
         });
-        const selectedTutorial = response.data.find(t => t.id === parseInt(tutorialId));
-        if (selectedTutorial) {
-          setTutorial(selectedTutorial);
-        } else {
-          Swal.fire({
-            title: 'Tutorial not found',
-            icon: 'error',
-            draggable: true
-          });
-          navigate('/tutorials');
-        }
+        setTutorial(response.data);
       } catch (error) {
         Swal.fire({
           title: 'Failed to load tutorial',
@@ -92,6 +82,26 @@ function Quiz() {
     }
   };
 
+  const handleSaveAndExit = async () => {
+    try {
+      // No need to send data explicitly; backend tracks via UserAnswer
+      navigate('/dashboard');
+      Swal.fire({
+        title: 'Progress Saved!',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+        draggable: true
+      });
+    } catch (error) {
+      Swal.fire({
+        title: 'Failed to save progress',
+        icon: 'error',
+        draggable: true
+      });
+    }
+  };
+
   if (!tutorial) {
     return <div className="container mx-auto p-8 text-gray-400">Loading...</div>;
   }
@@ -102,10 +112,10 @@ function Quiz() {
     <div className="container mx-auto p-8">
       <h2 className="text-3xl font-bold text-cyan-400 mb-6">{tutorial.title} - Quiz</h2>
       <button
-        onClick={() => navigate('/tutorials')}
+        onClick={handleSaveAndExit}
         className="mb-4 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
       >
-        Back to Tutorials
+        Save & Exit
       </button>
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
         <h3 className="text-2xl font-semibold text-gray-300 mb-4">

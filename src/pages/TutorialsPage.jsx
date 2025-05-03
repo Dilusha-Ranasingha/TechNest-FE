@@ -8,12 +8,23 @@ import Swal from 'sweetalert2';
 function TutorialsPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { action, tutorialId } = useParams(); // For routes like /tutorials/edit/:tutorialId or /tutorials/manage-mcqs/:tutorialId
+  const params = useParams();
+  const action = params.action || (window.location.pathname.includes('new') ? 'new' : 
+                                 window.location.pathname.includes('edit') ? 'edit' : 
+                                 window.location.pathname.includes('manage-mcqs') ? 'manage-mcqs' : null);
+  const tutorialId = params.tutorialId;
+  
+  console.log('Params:', params);
+  console.log('Action:', action);
+  console.log('TutorialId:', tutorialId);
+
   const [tutorials, setTutorials] = useState([]);
-  const [enrollments, setEnrollments] = useState([]); // For users to track enrolled tutorials
-  const [tutorialForm, setTutorialForm] = useState({ title: '', description: '' }); // For creating/updating tutorials
-  const [mcqForm, setMcqForm] = useState({ question: '', options: ['', '', '', ''], correctAnswer: '' }); // For creating/updating MCQs
-  const [mcqs, setMcqs] = useState([]); // For managing MCQs in a tutorial
+  const [enrollments, setEnrollments] = useState([]);
+  const [tutorialForm, setTutorialForm] = useState({ title: '', description: '' });
+  const [mcqForm, setMcqForm] = useState({ id: null, question: '', options: ['', '', '', ''], correctAnswer: '' });
+  const [mcqs, setMcqs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!user) {
@@ -31,9 +42,13 @@ function TutorialsPage() {
       } catch (error) {
         Swal.fire({
           title: 'Failed to load tutorials',
+          text: error.response?.data?.message || error.message,
           icon: 'error',
           draggable: true
         });
+        setError('Failed to load tutorials');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -58,17 +73,18 @@ function TutorialsPage() {
     const fetchMcqs = async () => {
       if (action === 'manage-mcqs' && tutorialId) {
         try {
-          const response = await axios.get(`http://localhost:8080/api/admin/quizzes/tutorials`, {
+          const response = await axios.get(`http://localhost:8080/api/admin/quizzes/tutorials/${tutorialId}`, {
             headers: { Authorization: `Bearer ${user.token}` }
           });
-          const tutorial = response.data.find(t => t.id === parseInt(tutorialId));
-          setMcqs(tutorial?.mcqs || []);
+          setMcqs(response.data.mcqs || []);
         } catch (error) {
           Swal.fire({
             title: 'Failed to load MCQs',
+            text: error.response?.data?.message || error.message,
             icon: 'error',
             draggable: true
           });
+          setError('Failed to load MCQs');
         }
       }
     };
@@ -76,20 +92,21 @@ function TutorialsPage() {
     const fetchTutorialForEdit = async () => {
       if (action === 'edit' && tutorialId) {
         try {
-          const response = await axios.get(`http://localhost:8080/api/admin/quizzes/tutorials`, {
+          const response = await axios.get(`http://localhost:8080/api/admin/quizzes/tutorials/${tutorialId}`, {
             headers: { Authorization: `Bearer ${user.token}` }
           });
-          const tutorial = response.data.find(t => t.id === parseInt(tutorialId));
-          if (tutorial) {
-            setTutorialForm({ title: tutorial.title, description: tutorial.description });
-          }
+          setTutorialForm({ title: response.data.title, description: response.data.description || '' });
         } catch (error) {
           Swal.fire({
             title: 'Failed to load tutorial',
+            text: error.response?.data?.message || error.message,
             icon: 'error',
             draggable: true
           });
+          setError('Failed to load tutorial');
         }
+      } else if (action === 'new') {
+        setTutorialForm({ title: '', description: '' });
       }
     };
 
@@ -101,12 +118,24 @@ function TutorialsPage() {
 
   const handleTutorialSubmit = async (e) => {
     e.preventDefault();
+    if (!tutorialForm.title.trim()) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Title is required',
+        icon: 'error',
+        draggable: true
+      });
+      return;
+    }
     try {
       const endpoint = action === 'edit'
         ? `/api/admin/quizzes/tutorials/${tutorialId}`
         : '/api/admin/quizzes/tutorials';
       const method = action === 'edit' ? 'put' : 'post';
-      const response = await axios[method](`http://localhost:8080${endpoint}`, tutorialForm, {
+      const response = await axios[method](`http://localhost:8080${endpoint}`, {
+        title: tutorialForm.title,
+        description: tutorialForm.description
+      }, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       Swal.fire({
@@ -123,6 +152,7 @@ function TutorialsPage() {
     } catch (error) {
       Swal.fire({
         title: action === 'edit' ? 'Failed to update tutorial' : 'Failed to create tutorial',
+        text: error.response?.data?.message || error.message,
         icon: 'error',
         draggable: true
       });
@@ -135,9 +165,17 @@ function TutorialsPage() {
         headers: { Authorization: `Bearer ${user.token}` }
       });
       setTutorials(prev => prev.filter(t => t.id !== tutorialId));
+      Swal.fire({
+        title: 'Tutorial Deleted',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+        draggable: true
+      });
     } catch (error) {
       Swal.fire({
         title: 'Failed to delete tutorial',
+        text: error.response?.data?.message || error.message,
         icon: 'error',
         draggable: true
       });
@@ -160,6 +198,7 @@ function TutorialsPage() {
     } catch (error) {
       Swal.fire({
         title: 'Failed to enroll',
+        text: error.response?.data?.message || error.message,
         icon: 'error',
         draggable: true
       });
@@ -168,30 +207,64 @@ function TutorialsPage() {
 
   const handleMcqSubmit = async (e) => {
     e.preventDefault();
+    if (!mcqForm.question.trim() || !mcqForm.options.every(opt => opt.trim()) || !mcqForm.correctAnswer.trim()) {
+      Swal.fire({
+        title: 'Error',
+        text: 'All fields are required and options cannot be empty',
+        icon: 'error',
+        draggable: true
+      });
+      return;
+    }
+    if (!mcqForm.options.includes(mcqForm.correctAnswer)) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Correct answer must be one of the options',
+        icon: 'error',
+        draggable: true
+      });
+      return;
+    }
     try {
-      const response = await axios.post(`http://localhost:8080/api/admin/quizzes/tutorials/${tutorialId}/mcqs`, {
+      const endpoint = mcqForm.id
+        ? `/api/admin/quizzes/mcqs/${mcqForm.id}`
+        : `/api/admin/quizzes/tutorials/${tutorialId}/mcqs`;
+      const method = mcqForm.id ? 'put' : 'post';
+      const response = await axios[method](`http://localhost:8080${endpoint}`, {
         question: mcqForm.question,
         options: mcqForm.options,
         correctAnswer: mcqForm.correctAnswer
       }, {
         headers: { Authorization: `Bearer ${user.token}` }
       });
-      setMcqs(prev => [...prev, response.data]);
-      setMcqForm({ question: '', options: ['', '', '', ''], correctAnswer: '' });
       Swal.fire({
-        title: 'MCQ Created',
+        title: mcqForm.id ? 'MCQ Updated' : 'MCQ Created',
         icon: 'success',
         timer: 1500,
         showConfirmButton: false,
         draggable: true
       });
+      setMcqs(prev => mcqForm.id
+        ? prev.map(m => m.id === response.data.id ? response.data : m)
+        : [...prev, response.data]);
+      setMcqForm({ id: null, question: '', options: ['', '', '', ''], correctAnswer: '' });
     } catch (error) {
       Swal.fire({
-        title: 'Failed to create MCQ',
+        title: mcqForm.id ? 'Failed to update MCQ' : 'Failed to create MCQ',
+        text: error.response?.data?.message || error.message,
         icon: 'error',
         draggable: true
       });
     }
+  };
+
+  const handleEditMcq = (mcq) => {
+    setMcqForm({
+      id: mcq.id,
+      question: mcq.question,
+      options: mcq.options,
+      correctAnswer: mcq.correctAnswer
+    });
   };
 
   const handleDeleteMcq = async (mcqId) => {
@@ -210,11 +283,30 @@ function TutorialsPage() {
     } catch (error) {
       Swal.fire({
         title: 'Failed to delete MCQ',
+        text: error.response?.data?.message || error.message,
         icon: 'error',
         draggable: true
       });
     }
   };
+
+  if (loading) {
+    return <div className="container mx-auto p-8 text-gray-400">Loading...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-8 text-gray-400">
+        <p>{error}</p>
+        <button
+          onClick={() => navigate('/tutorials')}
+          className="mt-4 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+        >
+          Back to Tutorials
+        </button>
+      </div>
+    );
+  }
 
   if (action === 'edit' || action === 'new') {
     return (
@@ -242,6 +334,7 @@ function TutorialsPage() {
               onChange={(e) => setTutorialForm({ ...tutorialForm, description: e.target.value })}
               className="w-full p-3 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
               rows="4"
+              required
             />
           </div>
           <button
@@ -272,7 +365,6 @@ function TutorialsPage() {
         >
           Back to Tutorials
         </button>
-        {/* MCQ Creation Form */}
         <form onSubmit={handleMcqSubmit} className="max-w-md mx-auto bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
           <div className="mb-4">
             <label htmlFor="question" className="block text-gray-300 mb-2">Question</label>
@@ -317,25 +409,41 @@ function TutorialsPage() {
             type="submit"
             className="w-full p-3 rounded bg-cyan-500 text-white font-semibold hover:bg-cyan-600"
           >
-            Add MCQ
+            {mcqForm.id ? 'Update MCQ' : 'Add MCQ'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMcqForm({ id: null, question: '', options: ['', '', '', ''], correctAnswer: '' })}
+            className="w-full mt-2 p-3 rounded bg-gray-600 text-white font-semibold hover:bg-gray-700"
+          >
+            Reset
           </button>
         </form>
-        {/* MCQ List */}
         <div>
           <h3 className="text-2xl font-semibold text-gray-300 mb-4">MCQs</h3>
           {mcqs.length > 0 ? (
             <div className="space-y-4">
               {mcqs.map(mcq => (
-                <div key={mcq.id} className="bg-gray-700 p-4 rounded-lg">
-                  <p className="text-gray-300"><strong>Question:</strong> {mcq.question}</p>
-                  <p className="text-gray-300"><strong>Options:</strong> {mcq.options.join(', ')}</p>
-                  <p className="text-gray-300"><strong>Correct Answer:</strong> {mcq.correctAnswer}</p>
-                  <button
-                    onClick={() => handleDeleteMcq(mcq.id)}
-                    className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
+                <div key={mcq.id} className="bg-gray-700 p-4 rounded-lg flex justify-between items-center">
+                  <div>
+                    <p className="text-gray-300"><strong>Question:</strong> {mcq.question}</p>
+                    <p className="text-gray-300"><strong>Options:</strong> {mcq.options.join(', ')}</p>
+                    <p className="text-gray-300"><strong>Correct Answer:</strong> {mcq.correctAnswer}</p>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => handleEditMcq(mcq)}
+                      className="mr-2 px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteMcq(mcq.id)}
+                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
