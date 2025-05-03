@@ -69,9 +69,11 @@ function AdminDashboard() {
 
   // Prepare data for the registration activity graph
   const prepareChartData = () => {
+    console.log('Preparing chart data with timeFilter:', timeFilter);
+
     // Filter registration activity based on the selected time range
     const now = new Date();
-    let filteredActivity = registrationActivity;
+    let filteredActivity = [...registrationActivity]; // Create a copy to avoid mutating state
 
     if (timeFilter !== 'all') {
       const daysToSubtract = {
@@ -83,8 +85,16 @@ function AdminDashboard() {
 
       const cutoffDate = new Date(now);
       cutoffDate.setDate(now.getDate() - daysToSubtract);
-      filteredActivity = registrationActivity.filter(activity => new Date(activity.createdAt) >= cutoffDate);
+      console.log('Cutoff Date:', cutoffDate.toISOString());
+
+      filteredActivity = filteredActivity.filter(activity => {
+        const activityDate = new Date(activity.createdAt);
+        console.log('Activity Date:', activity.createdAt, 'Parsed:', activityDate);
+        return activityDate >= cutoffDate;
+      });
     }
+
+    console.log('Filtered Activity:', filteredActivity);
 
     // Group registrations by date (daily counts)
     const registrationsByDate = filteredActivity.reduce((acc, activity) => {
@@ -96,6 +106,9 @@ function AdminDashboard() {
     // Sort dates
     const sortedDates = Object.keys(registrationsByDate).sort((a, b) => new Date(a) - new Date(b));
     const counts = sortedDates.map(date => registrationsByDate[date]);
+
+    console.log('Chart Labels:', sortedDates);
+    console.log('Chart Counts:', counts);
 
     return {
       labels: sortedDates,
@@ -213,7 +226,7 @@ function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {registrationActivity.map((activity, index) => (
+                  {registrationActivity.slice(0, 10).map((activity, index) => (
                     <tr key={index} className="border-t border-gray-700">
                       <td className="p-4">{activity.email}</td>
                       <td className="p-4">{activity.role}</td>
