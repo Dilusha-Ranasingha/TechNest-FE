@@ -16,12 +16,12 @@ import OAuthRedirectHandler from './components/auth/OAuthRedirectHandler';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminProfilePage from './pages/AdminProfilePage';
+import Quiz from './components/tutorials/Quiz';
 
-
-function ProtectedRoute({ children, role }) {
+function ProtectedRoute({ children, roles }) {
   const { user } = useAuth();
   if (!user) return <Navigate to="/" />;
-  if (role && user.role !== role) return <Navigate to="/" />;
+  if (roles && !roles.includes(user.role)) return <Navigate to="/" />;
   return children;
 }
 
@@ -41,12 +41,19 @@ function App() {
                 <Route path="/admin/register" element={<AdminRegister />} />
                 <Route path="/user/register" element={<UserRegister />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                <Route path="/dashboard" element={<ProtectedRoute role="USER"><DashboardPage /></ProtectedRoute>} />
-                <Route path="/tutorials" element={<ProtectedRoute role="USER"><TutorialsPage /></ProtectedRoute>} />
-                <Route path="/feed" element={<ProtectedRoute role="USER"><FeedPage /></ProtectedRoute>} />
-                <Route path="/profile" element={<ProtectedRoute role="USER"><ProfilePage /></ProtectedRoute>} />
-                <Route path="/admin/dashboard" element={<ProtectedRoute role="ADMIN"><AdminDashboardPage /></ProtectedRoute>} />
-                <Route path="/admin/profile" element={<ProtectedRoute role="ADMIN"><AdminProfilePage /></ProtectedRoute>} />
+                <Route path="/dashboard" element={<ProtectedRoute roles={['USER']}><DashboardPage /></ProtectedRoute>} />
+                <Route path="/feed" element={<ProtectedRoute roles={['USER']}><FeedPage /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute roles={['USER']}><ProfilePage /></ProtectedRoute>} />
+                <Route path="/admin/dashboard" element={<ProtectedRoute roles={['ADMIN']}><AdminDashboardPage /></ProtectedRoute>} />
+                <Route path="/admin/profile" element={<ProtectedRoute roles={['ADMIN']}><AdminProfilePage /></ProtectedRoute>} />
+                <Route
+                  path="/tutorials/:action?/:tutorialId?"
+                  element={<ProtectedRoute roles={['USER', 'ADMIN']}><TutorialsPage /></ProtectedRoute>}
+                />
+                <Route
+                  path="/tutorials/quiz/:tutorialId"
+                  element={<ProtectedRoute roles={['USER']}><Quiz /></ProtectedRoute>}
+                />
               </Routes>
             </main>
             <Footer />
