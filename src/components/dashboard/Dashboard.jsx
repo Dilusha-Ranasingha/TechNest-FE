@@ -12,28 +12,29 @@ function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch recent activity (mocked for now, can be replaced with an API call)
         setActivity([
           { id: 1, message: "You enrolled in Java Basics", date: "2025-04-26" },
           { id: 2, message: "You completed an MCQ in Java Basics", date: "2025-04-26" },
         ]);
 
-        // Fetch user's quiz progress
-        const response = await axios.get('http://localhost:8080/api/user/quizzes/dashboard', {
-          headers: { Authorization: `Bearer ${user.token}` }
-        });
+        const [progressResponse, tutorialsResponse] = await Promise.all([
+          axios.get('http://localhost:8080/api/user/quizzes/dashboard', {
+            headers: { Authorization: `Bearer ${user.token}` }
+          }),
+          axios.get('http://localhost:8080/api/user/quizzes/tutorials', {
+            headers: { Authorization: `Bearer ${user.token}` }
+          })
+        ]);
 
-        // Fetch tutorial details to get titles
-        const tutorialsResponse = await axios.get('http://localhost:8080/api/user/quizzes/tutorials', {
-          headers: { Authorization: `Bearer ${user.token}` }
-        });
-
-        // Map progress data with tutorial titles and calculate score
-        const enrichedProgress = response.data.map(progress => {
+        const enrichedProgress = progressResponse.data.map(progress => {
           const tutorial = tutorialsResponse.data.find(t => t.id === progress.tutorialId);
+          if (!tutorial) {
+            console.warn(`No tutorial found for tutorialId: ${progress.tutorialId}`);
+            return { ...progress, title: 'Unknown Tutorial', score: 0 };
+          }
           return {
             ...progress,
-            title: tutorial ? tutorial.title : 'Unknown Tutorial',
+            title: tutorial.title,
             score: progress.totalQuestions > 0 
               ? ((progress.correctAnswers / progress.totalQuestions) * 100).toFixed(2) 
               : 0
@@ -42,9 +43,10 @@ function Dashboard() {
 
         setProgressData(enrichedProgress);
       } catch (error) {
-        console.error('Failed to fetch dashboard data', error);
+        console.error('Failed to fetch dashboard data:', error.response?.data || error.message);
         Swal.fire({
           title: 'Failed to load dashboard data',
+          text: error.response?.data?.message || "Check your network or token.",
           icon: 'error',
           draggable: true
         });
