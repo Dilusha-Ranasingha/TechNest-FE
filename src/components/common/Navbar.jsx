@@ -35,6 +35,7 @@ function Navbar() {
               <>
                 <Link to="/dashboard" className="text-white hover:text-cyan-400">Dashboard</Link>
                 <Link to="/tutorials" className="text-white hover:text-cyan-400">Tutorials</Link>
+                <Link to="/advertisements" className="text-white hover:text-cyan-400">Advertiesment</Link>
                 <Link to="/feed" className="text-white hover:text-cyan-400">Feed</Link>
                 <Link to="/profile" className="flex items-center">
                   <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-white font-bold">
