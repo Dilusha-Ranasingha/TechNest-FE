@@ -87,6 +87,10 @@ function Login({ role }) {
         <div className="mt-4 text-center">
           <Link to="/forgot-password" className="text-cyan-400 hover:underline">Forgot Password?</Link>
         </div>
+        <div className="mt-4 text-center flex flex-col">
+          <span className="text-gray-400">Don't have an account?</span>
+          <Link to="/user/register" className="text-cyan-400 hover:underline">Click here</Link>
+        </div>
         <div className="mt-4 flex justify-center">
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
