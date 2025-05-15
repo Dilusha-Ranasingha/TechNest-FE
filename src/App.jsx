@@ -17,6 +17,8 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminProfilePage from './pages/AdminProfilePage';
 import Quiz from './components/tutorials/Quiz';
+import AdvertisementsPage from './pages/AdvertisementsPage';
+import PostDashboardPage from './pages/post management/PostDashboardPage';
 
 function ProtectedRoute({ children, roles }) {
   const { user } = useAuth();
@@ -36,6 +38,14 @@ function App() {
             <main className="flex-grow">
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/PostDashboardPage" element={<PostDashboardPage />} />
+
+
+                <Route path="/advertisements" element={<AdvertisementsPage />} />
+                <Route path="/advertisements/new" element={<AdvertisementsPage />} />
+                <Route path="/advertisements/edit/:adId" element={<AdvertisementsPage />} />
+
+                
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/user/login" element={<UserLogin />} />
                 <Route path="/admin/register" element={<AdminRegister />} />

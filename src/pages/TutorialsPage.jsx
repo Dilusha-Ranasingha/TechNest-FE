@@ -424,7 +424,7 @@ function TutorialsPage() {
           {mcqs.length > 0 ? (
             <div className="space-y-4">
               {mcqs.map(mcq => (
-                <div key={mcq.id} className="bg-gray-700 p-4 rounded-lg flex justify-between items-center">
+                <div key={mcq.id} className="bg-gray-700 p-4 rounded-lg justify-between items-center">
                   <div>
                     <p className="text-gray-300"><strong>Question:</strong> {mcq.question}</p>
                     <p className="text-gray-300"><strong>Options:</strong> {mcq.options.join(', ')}</p>

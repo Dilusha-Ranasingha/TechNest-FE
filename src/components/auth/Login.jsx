@@ -22,7 +22,7 @@ function Login({ role }) {
         showConfirmButton: false,
         timer: 1500
       });
-      navigate('/dashboard');
+      navigate('/PostDashboardPage');    // Redirect to the post dashboard page
     } else {
       Swal.fire({
         title: "Invalid credentials",
@@ -86,6 +86,10 @@ function Login({ role }) {
         <button type="submit" className="w-full bg-cyan-500 text-white p-3 rounded-lg hover:bg-cyan-600">Login</button>
         <div className="mt-4 text-center">
           <Link to="/forgot-password" className="text-cyan-400 hover:underline">Forgot Password?</Link>
+        </div>
+        <div className="mt-4 text-center flex flex-col">
+          <span className="text-gray-400">Don't have an account?</span>
+          <Link to="/user/register" className="text-cyan-400 hover:underline">Click here</Link>
         </div>
         <div className="mt-4 flex justify-center">
           <GoogleLogin
