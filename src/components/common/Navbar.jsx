@@ -18,10 +18,27 @@ function Navbar() {
     return firstName;
   };
 
+  const handleLogoClick = () => {         // Add a function to handle logo click looged user or not
+    if (user) {
+      if (user.role === 'USER') {
+        navigate('/PostDashboardPage');
+      } else {
+        navigate('/admin/dashboard');
+      }
+    } else {
+      navigate('/');
+    }
+  };
+
   return (
     <nav className="bg-gray-900 p-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold text-cyan-400">TechNest</Link>
+        <span
+          onClick={handleLogoClick}            // Add onClick handler to the logo
+          className="text-2xl font-bold text-cyan-400 cursor-pointer"
+        >
+          TechNest
+        </span>
         <div className="md:hidden">
           <button onClick={() => setIsOpen(!isOpen)} className="text-white focus:outline-none">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
