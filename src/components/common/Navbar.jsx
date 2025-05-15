@@ -18,7 +18,7 @@ function Navbar() {
     return firstName;
   };
 
-  const handleLogoClick = () => {
+  const handleLogoClick = () => {         // Add a function to handle logo click looged user or not
     if (user) {
       if (user.role === 'USER') {
         navigate('/PostDashboardPage');
@@ -34,7 +34,7 @@ function Navbar() {
     <nav className="bg-gray-900 p-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
         <span
-          onClick={handleLogoClick}
+          onClick={handleLogoClick}            // Add onClick handler to the logo
           className="text-2xl font-bold text-cyan-400 cursor-pointer"
         >
           TechNest
