@@ -18,7 +18,8 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminProfilePage from './pages/AdminProfilePage';
 import Quiz from './components/tutorials/Quiz';
 import AdvertisementsPage from './pages/AdvertisementsPage';
-import PostDashboardPage from './pages/post management/PostDashboardPage';
+import PostDashboardPage from './pages/postManagement/PostDashboardPage';
+import UserPostsPage from './pages/postManagement/UserPostsPage';
 
 function ProtectedRoute({ children, roles }) {
   const { user } = useAuth();
@@ -38,14 +39,11 @@ function App() {
             <main className="flex-grow">
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/PostDashboardPage" element={<PostDashboardPage />} />
-
-
+                <Route path="/postManagement/PostDashboardPage" element={<ProtectedRoute roles={['USER']}><PostDashboardPage /></ProtectedRoute>} />
+                <Route path="/postManagement/user-posts" element={<ProtectedRoute roles={['USER']}><UserPostsPage /></ProtectedRoute>} />
                 <Route path="/advertisements" element={<AdvertisementsPage />} />
                 <Route path="/advertisements/new" element={<AdvertisementsPage />} />
                 <Route path="/advertisements/edit/:adId" element={<AdvertisementsPage />} />
-
-                
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/user/login" element={<UserLogin />} />
                 <Route path="/admin/register" element={<AdminRegister />} />
