@@ -1,0 +1,76 @@
+/* postDashboardPageCss.css */
+
+.post-dashboard-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 32px 24px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+.post-dashboard-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #22223b;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.post-dashboard-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.post-dashboard-btn {
+    background: #3a86ff;
+    color: #fff;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.post-dashboard-btn:hover {
+    background: #265d97;
+}
+
+.post-dashboard-form-wrapper {
+    margin-bottom: 32px;
+    background: #f8f9fa;
+    padding: 24px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(58,134,255,0.07);
+}
+
+.post-dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 28px;
+}
+
+.post-dashboard-card {
+    background: #f6f7fb;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(34,34,59,0.07);
+    padding: 18px 14px;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.post-dashboard-card:hover {
+    box-shadow: 0 6px 24px rgba(58,134,255,0.13);
+    transform: translateY(-4px) scale(1.02);
+}
+
+.post-dashboard-empty {
+    text-align: center;
+    color: #adb5bd;
+    font-size: 1.1rem;
+    padding: 32px 0;
+}
