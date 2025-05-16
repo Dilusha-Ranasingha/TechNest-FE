@@ -48,12 +48,6 @@ const PostDashboardPage = () => {
         >
           Add Post
         </button>
-        <button
-          onClick={() => navigate('/postManagement/user-posts')}
-          className="post-dashboard-btn"
-        >
-          Manage My Posts
-        </button>
       </div>
       {showForm && (
         <div className="post-dashboard-form-wrapper">
