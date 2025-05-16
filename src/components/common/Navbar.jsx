@@ -50,7 +50,7 @@ function Navbar() {
           {user ? (
             user.role === 'USER' ? (
               <>
-                <Link to="/postManagement/PostDashboardPage" className="text-white hover:text-cyan-400">Dashboard</Link> {/* Updated */}
+                <Link to="/dashboard" className="text-white hover:text-cyan-400">Dashboard</Link> {/* Updated */}
                 <Link to="/tutorials" className="text-white hover:text-cyan-400">Tutorials</Link>
                 <Link to="/advertisements" className="text-white hover:text-cyan-400">Advertisement</Link>
                 <Link to="/feed" className="text-white hover:text-cyan-400">Feed</Link>
