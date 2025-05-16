@@ -14,7 +14,7 @@ export const createPost = async (postData) => {
   const formData = new FormData();
   formData.append('title', postData.title);
   formData.append('description', postData.description);
-  if (postData.mediaFiles && Array.isArray(postData.mediaFiles)) { // Check if mediaFiles is an array
+  if (postData.mediaFiles && Array.isArray(postData.mediaFiles)) {
     postData.mediaFiles.forEach((file, index) => {
       formData.append(`mediaFiles[${index}]`, file);
     });
@@ -41,7 +41,12 @@ export const updatePost = async (id, postData) => {
 };
 
 export const deletePost = async (id) => {
-  await api.delete(`/posts/${id}`);
+  try {
+    await api.delete(`/posts/${id}`);
+  } catch (error) {
+    console.error('Error deleting post:', error);
+    throw error; // Re-throw to handle in the calling function
+  }
 };
 
 export const likePost = async (id) => {
