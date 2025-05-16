@@ -18,10 +18,10 @@ function Navbar() {
     return firstName;
   };
 
-  const handleLogoClick = () => {         // Add a function to handle logo click looged user or not
+  const handleLogoClick = () => {
     if (user) {
       if (user.role === 'USER') {
-        navigate('/PostDashboardPage');
+        navigate('/postManagement/PostDashboardPage'); // Updated path
       } else {
         navigate('/admin/dashboard');
       }
@@ -34,7 +34,7 @@ function Navbar() {
     <nav className="bg-gray-900 p-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
         <span
-          onClick={handleLogoClick}            // Add onClick handler to the logo
+          onClick={handleLogoClick}
           className="text-2xl font-bold text-cyan-400 cursor-pointer"
         >
           TechNest
@@ -50,9 +50,9 @@ function Navbar() {
           {user ? (
             user.role === 'USER' ? (
               <>
-                <Link to="/dashboard" className="text-white hover:text-cyan-400">Dashboard</Link>
+                <Link to="/postManagement/PostDashboardPage" className="text-white hover:text-cyan-400">Dashboard</Link> {/* Updated */}
                 <Link to="/tutorials" className="text-white hover:text-cyan-400">Tutorials</Link>
-                <Link to="/advertisements" className="text-white hover:text-cyan-400">Advertiesment</Link>
+                <Link to="/advertisements" className="text-white hover:text-cyan-400">Advertisement</Link>
                 <Link to="/feed" className="text-white hover:text-cyan-400">Feed</Link>
                 <Link to="/profile" className="flex items-center">
                   <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-white font-bold">
