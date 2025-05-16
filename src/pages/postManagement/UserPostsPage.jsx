@@ -23,8 +23,17 @@ const UserPostsPage = () => {
   };
 
   const handleDelete = async (id) => {
-    await deletePost(id);
-    fetchPosts();
+    try {
+      // Optimistically remove the post from the state
+      setPosts(posts.filter(post => post.id !== id));
+      await deletePost(id);
+      fetchPosts(); // Sync with backend to ensure consistency
+    } catch (error) {
+      console.error('Failed to delete post:', error);
+      // Restore the post if deletion fails
+      fetchPosts();
+      alert(`Failed to delete the post (ID: ${id}). Please try again. Server error: ${error.message}`);
+    }
   };
 
   return (
