@@ -3,6 +3,7 @@ import { getAllPosts } from '../../services/postService';
 import PostCard from '../../components/common/PostCard';
 import PostForm from '../../components/post/PostForm';
 import { useNavigate } from 'react-router-dom';
+import '../../styles/postDashboardPageCss.css'; // Import your CSS file
 
 const PostDashboardPage = () => {
   const [posts, setPosts] = useState([]);
@@ -38,28 +39,38 @@ const PostDashboardPage = () => {
   if (error) return <div className="container mx-auto p-4 text-center text-red-400">{error}</div>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold text-cyan-400 mb-4">Post Dashboard</h1>
-      <button
-        onClick={() => setShowForm(true)}
-        className="bg-cyan-600 hover:bg-cyan-500 text-white p-2 rounded mb-4"
-      >
-        Add Post
-      </button>
-      <button
-        onClick={() => navigate('/postManagement/user-posts')}
-        className="bg-cyan-600 hover:bg-cyan-500 text-white p-2 rounded mb-4 ml-2"
-      >
-        Manage My Posts
-      </button>
-      {showForm && <PostForm onSave={handleSave} onCancel={() => setShowForm(false)} />}
-      {posts.length === 0 ? (
-        <p className="text-gray-400">No posts available.</p>
-      ) : (
-        posts.map((post) => (
-          <PostCard key={post.id} post={post} onUpdate={fetchPosts} />
-        ))
+    <div className="post-dashboard-container">
+      <h1 className="post-dashboard-title">Post Dashboard</h1>
+      <div className="post-dashboard-actions">
+        <button
+          onClick={() => setShowForm(true)}
+          className="post-dashboard-btn"
+        >
+          Add Post
+        </button>
+        <button
+          onClick={() => navigate('/postManagement/user-posts')}
+          className="post-dashboard-btn"
+        >
+          Manage My Posts
+        </button>
+      </div>
+      {showForm && (
+        <div className="post-dashboard-form-wrapper">
+          <PostForm onSave={handleSave} onCancel={() => setShowForm(false)} />
+        </div>
       )}
+      <div className="post-dashboard-cards">
+        {posts.length === 0 ? (
+          <p className="post-dashboard-empty">No posts available.</p>
+        ) : (
+          posts.map((post) => (
+            <div className="post-dashboard-card" key={post.id}>
+              <PostCard post={post} onUpdate={fetchPosts} />
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };
