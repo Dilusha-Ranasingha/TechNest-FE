@@ -30,15 +30,8 @@ const UserPostsPage = () => {
   return (
     <div className="user-posts-container">
       <h1 className="user-posts-title">My Posts</h1>
-      {editingPost ? (
+      {editingPost && (
         <PostForm post={editingPost} onSave={handleSave} onCancel={() => setEditingPost(null)} />
-      ) : (
-        <button
-          onClick={() => setEditingPost({})}
-          className="add-post-btn"
-        >
-          Add New Post
-        </button>
       )}
       {posts.map((post) => (
         <div key={post.id} className="user-post-card">
