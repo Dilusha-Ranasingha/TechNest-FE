@@ -52,6 +52,7 @@ function Navbar() {
               <>
                 <Link to="/dashboard" className="text-white hover:text-cyan-400">Dashboard</Link> {/* Updated */}
                 <Link to="/tutorials" className="text-white hover:text-cyan-400">Tutorials</Link>
+                <Link to="/postManagement/user-posts" className="text-white hover:text-cyan-400">Manage My Posts</Link> {/* add a new button to mange the own post */}
                 <Link to="/advertisements" className="text-white hover:text-cyan-400">Advertisement</Link>
                 <Link to="/feed" className="text-white hover:text-cyan-400">Feed</Link>
                 <Link to="/profile" className="flex items-center">
