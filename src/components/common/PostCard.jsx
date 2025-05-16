@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { likePost, commentPost, sharePost, getPostComments } from '../../services/postService';
+import { likePost, unlikePost, hasUserLikedPost, commentPost, sharePost, getPostComments } from '../../services/postService';
 
 const PostCard = ({ post, onUpdate, onDelete }) => {
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [hasLiked, setHasLiked] = useState(false);
 
   useEffect(() => {
     fetchComments();
-  }, [post.id]); // Re-fetch comments when post.id changes (e.g., on mount or update)
+    checkIfLiked();
+  }, [post.id]);
 
   const fetchComments = async () => {
     try {
@@ -19,9 +21,29 @@ const PostCard = ({ post, onUpdate, onDelete }) => {
     }
   };
 
-  const handleLike = async () => {
-    await likePost(post.id);
-    onUpdate();
+  const checkIfLiked = async () => {
+    try {
+      const liked = await hasUserLikedPost(post.id);
+      setHasLiked(liked);
+    } catch (error) {
+      console.error('Error checking like status:', error);
+    }
+  };
+
+  const handleLikeToggle = async () => {
+    try {
+      if (hasLiked) {
+        await unlikePost(post.id);
+      } else {
+        await likePost(post.id);
+      }
+      setHasLiked(!hasLiked); // Optimistically update the like status
+      onUpdate(); // Refresh the post list to sync with backend
+    } catch (error) {
+      console.error('Error toggling like:', error);
+      checkIfLiked(); // Revert to actual status if the request fails
+      onUpdate();
+    }
   };
 
   const handleComment = async (e) => {
@@ -30,7 +52,7 @@ const PostCard = ({ post, onUpdate, onDelete }) => {
       await commentPost(post.id, comment);
       setComment('');
       onUpdate();
-      fetchComments(); // Refresh comments after adding a new one
+      fetchComments();
     }
   };
 
@@ -54,7 +76,12 @@ const PostCard = ({ post, onUpdate, onDelete }) => {
         <span>By {post.username} | {new Date(post.createdAt).toLocaleDateString()}</span>
       </div>
       <div className="mt-2 flex space-x-4">
-        <button onClick={handleLike} className="text-cyan-400 hover:text-cyan-300">Like ({post.likeCount})</button>
+        <button
+          onClick={handleLikeToggle}
+          className={`hover:text-cyan-300 ${hasLiked ? 'text-red-400' : 'text-cyan-400'}`} // Highlight if liked
+        >
+          {hasLiked ? 'Unlike' : 'Like'} ({post.likeCount})
+        </button>
         <form onSubmit={handleComment} className="flex-1">
           <input
             type="text"
@@ -67,7 +94,6 @@ const PostCard = ({ post, onUpdate, onDelete }) => {
         </form>
         <button onClick={handleShare} className="text-cyan-400 hover:text-cyan-300">Share ({post.shareCount})</button>
       </div>
-      {/* Display comments */}
       <div className="mt-4">
         {comments.length > 0 ? (
           comments.map((comment, index) => (

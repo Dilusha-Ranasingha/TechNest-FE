@@ -53,6 +53,17 @@ export const likePost = async (id) => {
   await api.post(`/posts/${id}/like`, { postId: id });
 };
 
+// New function to unlike a post
+export const unlikePost = async (id) => {
+  await api.delete(`/posts/${id}/like`);
+};
+
+// New function to check if the user has liked the post
+export const hasUserLikedPost = async (id) => {
+  const response = await api.get(`/posts/${id}/has-liked`);
+  return response.data;
+};
+
 export const commentPost = async (id, content) => {
   await api.post(`/posts/${id}/comment`, { content });
 };
@@ -61,7 +72,6 @@ export const sharePost = async (id) => {
   await api.post(`/posts/${id}/share`, { postId: id });
 };
 
-// New function to fetch comments for a post
 export const getPostComments = async (postId) => {
   const response = await api.get(`/posts/${postId}/comments`);
   return response.data;
