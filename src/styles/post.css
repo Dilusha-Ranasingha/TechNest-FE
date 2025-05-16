@@ -1,0 +1,17 @@
+.post-card {
+  transition: transform 0.2s;
+}
+
+.post-card:hover {
+  transform: scale(1.02);
+}
+
+.post-form input,
+.post-form textarea {
+  transition: border-color 0.2s;
+}
+
+.post-form input:focus,
+.post-form textarea:focus {
+  border-color: #22d3ee;
+}
