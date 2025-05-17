@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
-function TutorialCard({ tutorial, userRole, onDelete, onEnroll, isEnrolled }) {
+function TutorialCard({ tutorial, userRole, onDelete, onEnroll, onUnenroll, isEnrolled }) {
   const handleDelete = () => {
     Swal.fire({
       title: 'Are you sure?',
@@ -21,6 +21,23 @@ function TutorialCard({ tutorial, userRole, onDelete, onEnroll, isEnrolled }) {
 
   const handleEnroll = () => {
     onEnroll(tutorial.id);
+  };
+
+  const handleUnenroll = () => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You will be unenrolled from this tutorial!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, unenroll!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        onUnenroll(tutorial.id);
+        Swal.fire('Unenrolled!', 'You have been unenrolled from the tutorial.', 'success');
+      }
+    });
   };
 
   return (
@@ -52,12 +69,20 @@ function TutorialCard({ tutorial, userRole, onDelete, onEnroll, isEnrolled }) {
         ) : (
           <>
             {isEnrolled ? (
-              <Link
-                to={`/tutorials/quiz/${tutorial.id}`}
-                className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
-              >
-                Take Quiz
-              </Link>
+              <>
+                <Link
+                  to={`/tutorials/quiz/${tutorial.id}`}
+                  className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
+                >
+                  Take Quiz
+                </Link>
+                <button
+                  onClick={handleUnenroll}
+                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Unenroll
+                </button>
+              </>
             ) : (
               <button
                 onClick={handleEnroll}

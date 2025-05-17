@@ -85,7 +85,7 @@ function Quiz() {
   const handleSaveAndExit = async () => {
     try {
       // No need to send data explicitly; backend tracks via UserAnswer
-      navigate('/dashboard');
+      navigate('/tutorials');
       Swal.fire({
         title: 'Progress Saved!',
         icon: 'success',
@@ -102,6 +102,41 @@ function Quiz() {
     }
   };
 
+  const handleUnenroll = async () => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You will be unenrolled from this tutorial and your progress will be reset!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, unenroll!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(`http://localhost:8080/api/user/quizzes/tutorials/${tutorialId}/unenroll`, {
+            headers: { Authorization: `Bearer ${user.token}` }
+          });
+          Swal.fire({
+            title: 'Unenrolled Successfully',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false,
+            draggable: true
+          });
+          navigate('/tutorials');
+        } catch (error) {
+          Swal.fire({
+            title: 'Failed to unenroll',
+            text: error.response?.data?.message || error.message,
+            icon: 'error',
+            draggable: true
+          });
+        }
+      }
+    });
+  };
+
   if (!tutorial) {
     return <div className="container mx-auto p-8 text-gray-400">Loading...</div>;
   }
@@ -111,12 +146,20 @@ function Quiz() {
   return (
     <div className="container mx-auto p-8">
       <h2 className="text-3xl font-bold text-cyan-400 mb-6">{tutorial.title} - Quiz</h2>
-      <button
-        onClick={handleSaveAndExit}
-        className="mb-4 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
-      >
-        Save & Exit
-      </button>
+      <div className="flex space-x-3 mb-4">
+        <button
+          onClick={handleSaveAndExit}
+          className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+        >
+          Save & Exit
+        </button>
+        <button
+          onClick={handleUnenroll}
+          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+        >
+          Unenroll
+        </button>
+      </div>
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
         <h3 className="text-2xl font-semibold text-gray-300 mb-4">
           Question {currentQuestion + 1} of {tutorial.mcqs.length}

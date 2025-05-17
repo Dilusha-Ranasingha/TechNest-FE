@@ -195,9 +195,48 @@ function TutorialsPage() {
         showConfirmButton: false,
         draggable: true
       });
+      navigate(`/tutorials/quiz/${tutorialId}`);
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      if (errorMessage.includes("Tutorial not found")) {
+        Swal.fire({
+          title: 'Tutorial Unavailable',
+          text: 'This tutorial is no longer available. It may have been removed.',
+          icon: 'error',
+          draggable: true
+        });
+        // Refresh the tutorials list
+        const response = await axios.get('http://localhost:8080/api/user/quizzes/tutorials', {
+          headers: { Authorization: `Bearer ${user.token}` }
+        });
+        setTutorials(response.data);
+      } else {
+        Swal.fire({
+          title: 'Failed to enroll',
+          text: errorMessage,
+          icon: 'error',
+          draggable: true
+        });
+      }
+    }
+  };
+
+  const handleUnenroll = async (tutorialId) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/user/quizzes/tutorials/${tutorialId}/unenroll`, {
+        headers: { Authorization: `Bearer ${user.token}` }
+      });
+      setEnrollments(prev => prev.filter(id => id !== tutorialId));
+      Swal.fire({
+        title: 'Unenrolled Successfully',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+        draggable: true
+      });
     } catch (error) {
       Swal.fire({
-        title: 'Failed to enroll',
+        title: 'Failed to unenroll',
         text: error.response?.data?.message || error.message,
         icon: 'error',
         draggable: true
@@ -475,6 +514,7 @@ function TutorialsPage() {
               userRole={user.role}
               onDelete={handleDeleteTutorial}
               onEnroll={handleEnroll}
+              onUnenroll={handleUnenroll}
               isEnrolled={enrollments.includes(tutorial.id)}
             />
           ))
