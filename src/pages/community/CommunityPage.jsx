@@ -45,13 +45,24 @@ const CommunityPage = () => {
   }
 
   const handleCreatePost = async (e) => {
-    e.preventDefault()
-    await createPost({ title, description })
-    setTitle("")
-    setDescription("")
-    setShowForm(false)
-    fetchPosts()
+  e.preventDefault()
+
+  if (title.trim().length < 5 || title.trim().length > 100) {
+    alert("Title must be between 5 and 100 characters")
+    return
   }
+
+  if (description.trim().length < 10) {
+    alert("Description must be at least 10 characters long")
+    return
+  }
+
+  await createPost({ title, description })
+  setTitle("")
+  setDescription("")
+  setShowForm(false)
+  fetchPosts()
+}
 
   const handleAddComment = async (postId) => {
     if (!commentContent.trim()) return
