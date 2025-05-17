@@ -34,7 +34,7 @@ function Login({ role }) {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/oauth/google', {
+      const response = await axios.post('http://localhost:8080/login/oauth2/code/google', {
         credential: credentialResponse.credential
       });
       const { token, role: userRole, email: userEmail } = response.data;
