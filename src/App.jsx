@@ -25,7 +25,7 @@ import ManageCommunityPostsPage from './pages/community/ManageCommunityPostsPage
 
 function ProtectedRoute({ children, roles }) {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/" />;
+  if (!user) return <Navigate to="/postManagement/PostDashboardPage" />;  // Redirect to post page
   if (roles && !roles.includes(user.role)) return <Navigate to="/" />;
   return children;
 }
