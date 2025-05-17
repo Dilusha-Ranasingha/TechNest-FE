@@ -34,14 +34,27 @@ const ManageCommunityPostsPage = () => {
   }
 
   const handleUpdatePost = async (postId) => {
-    if (editTitle.trim() && editDescription.trim()) {
-      await updatePost(postId, { title: editTitle, description: editDescription })
-      setEditingPostId(null)
-      fetchPosts()
-    } else {
-      alert("Title and description cannot be empty.")
-    }
+  const trimmedTitle = editTitle.trim()
+  const trimmedDescription = editDescription.trim()
+
+  if (trimmedTitle.length < 5 || trimmedTitle.length > 100) {
+    alert("Title must be between 5 and 100 characters.")
+    return
   }
+
+  if (trimmedDescription.length < 10) {
+    alert("Description must be at least 10 characters.")
+    return
+  }
+
+  await updatePost(postId, {
+    title: trimmedTitle,
+    description: trimmedDescription,
+  })
+
+  setEditingPostId(null)
+  fetchPosts()
+}
 
   const handleCancelEdit = () => {
     setEditingPostId(null)
