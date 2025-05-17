@@ -1,0 +1,101 @@
+/* userPostPageCss.css */
+
+.user-posts-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 32px 24px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.user-posts-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #22223b;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+.add-post-btn {
+    align-self: flex-end;
+    background: #3a86ff;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-bottom: 18px;
+}
+
+.add-post-btn:hover {
+    background: #265dbe;
+}
+
+.user-post-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(60,60,60,0.07);
+    padding: 20px 18px 14px 18px;
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+}
+
+.user-post-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.edit-post-btn,
+.delete-post-btn {
+    padding: 7px 18px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.98rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+}
+
+.edit-post-btn {
+    background: #ffd60a;
+    color: #22223b;
+}
+
+.edit-post-btn:hover {
+    background: #ffe066;
+}
+
+.delete-post-btn {
+    background: #ff595e;
+    color: #fff;
+}
+
+.delete-post-btn:hover {
+    background: #d90429;
+}
+
+@media (max-width: 600px) {
+    .user-posts-container {
+        padding: 12px 4px;
+        max-width: 98vw;
+    }
+    .user-post-card {
+        padding: 12px 6px 10px 6px;
+    }
+    .add-post-btn {
+        width: 100%;
+        align-self: stretch;
+    }
+}

@@ -22,7 +22,7 @@ function Login({ role }) {
         showConfirmButton: false,
         timer: 1500
       });
-      navigate('/dashboard');
+      navigate('/postManagement/PostDashboardPage');    // Redirect to the post dashboard page after login
     } else {
       Swal.fire({
         title: "Invalid credentials",
