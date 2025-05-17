@@ -7,13 +7,14 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedRole = localStorage.getItem('role');
-    const storedEmail = localStorage.getItem('email');
-    if (storedToken && storedRole && storedEmail) {
-      setUser({ token: storedToken, role: storedRole, email: storedEmail });
-    }
-  }, []);
+  const storedToken = localStorage.getItem('token');
+  const storedRole = localStorage.getItem('role');
+  const storedEmail = localStorage.getItem('email');
+  console.log('AuthProvider useEffect:', { storedToken, storedRole, storedEmail });
+  if (storedToken && storedRole && storedEmail) {
+    setUser({ token: storedToken, role: storedRole, email: storedEmail });
+  }
+}, []);
 
   const login = async (email, password, expectedRole) => {
     try {

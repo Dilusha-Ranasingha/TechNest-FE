@@ -12,30 +12,31 @@ function AdvertisementsPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!user || !token) {
-      navigate(user?.role === 'ADMIN' ? '/admin/login' : '/user/login');
-      return;
+  if (!user) {
+    // Redirect to login if user is not authenticated
+    navigate(user?.role === 'ADMIN' ? '/admin/login' : '/user/login');
+    return;
+  }
+
+  const fetchAds = async () => {
+    try {
+      const data = await fetchAllAdvertisements(user.token);
+      setAds(data);
+    } catch (err) {
+      Swal.fire({
+        title: 'Failed to load advertisements',
+        text: err.message,
+        icon: 'error',
+        draggable: true,
+      });
+      setError('Failed to load advertisements');
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const fetchAds = async () => {
-      try {
-        const data = await fetchAllAdvertisements(token);
-        setAds(data);
-      } catch (err) {
-        Swal.fire({
-          title: 'Failed to load advertisements',
-          text: err.message,
-          icon: 'error',
-          draggable: true,
-        });
-        setError('Failed to load advertisements');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAds();
-  }, [user, token, navigate]);
+  fetchAds();
+}, [user, navigate]);
 
   const handleDeleteAd = async (adId) => {
     try {

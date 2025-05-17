@@ -27,8 +27,13 @@ import EditAdvertisement from './pages/advertisement/EditAdvertisement';
 
 function ProtectedRoute({ children, roles }) {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/postManagement/PostDashboardPage" />;  // Redirect to post page
-  if (roles && !roles.includes(user.role)) return <Navigate to="/" />;
+  if (!user) {
+    // Redirect to the appropriate login page based on the role or default to user login
+    return <Navigate to="/user/login" />;
+  }
+  if (roles && !roles.includes(user.role)) {
+    return <Navigate to="/" />;
+  }
   return children;
 }
 
