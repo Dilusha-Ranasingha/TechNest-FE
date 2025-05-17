@@ -20,6 +20,8 @@ import Quiz from './components/tutorials/Quiz';
 import AdvertisementsPage from './pages/AdvertisementsPage';
 import PostDashboardPage from './pages/postManagement/PostDashboardPage';
 import UserPostsPage from './pages/postManagement/UserPostsPage';
+import CommunityPage from './pages/community/CommunityPage';
+import ManageCommunityPostsPage from './pages/community/ManageCommunityPostsPage';
 
 function ProtectedRoute({ children, roles }) {
   const { user } = useAuth();
@@ -41,6 +43,8 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/postManagement/PostDashboardPage" element={<ProtectedRoute roles={['USER']}><PostDashboardPage /></ProtectedRoute>} />
                 <Route path="/postManagement/user-posts" element={<ProtectedRoute roles={['USER']}><UserPostsPage /></ProtectedRoute>} />
+                <Route path="/community" element={<ProtectedRoute roles={['USER']}><CommunityPage /></ProtectedRoute>} />
+                <Route path="/community/manage" element={<ProtectedRoute roles={['USER']}><ManageCommunityPostsPage /></ProtectedRoute>} />
                 <Route path="/advertisements" element={<AdvertisementsPage />} />
                 <Route path="/advertisements/new" element={<AdvertisementsPage />} />
                 <Route path="/advertisements/edit/:adId" element={<AdvertisementsPage />} />
