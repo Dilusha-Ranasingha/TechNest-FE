@@ -65,6 +65,7 @@ const PostForm = ({ post, onSave, onCancel }) => {
           placeholder="What's on your mind?"
           className="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300"
           maxLength={100}
+          minLength={5}
           required
         />
         <div className="text-right text-xs text-gray-400 mt-1">{title.length}/100</div>
@@ -82,6 +83,7 @@ const PostForm = ({ post, onSave, onCancel }) => {
           className="w-full p-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-300"
           rows={5}
           maxLength={1000}
+          minLength={5}
           required
         />
         <div className="text-right text-xs text-gray-400 mt-1">{description.length}/1000</div>
