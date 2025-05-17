@@ -17,14 +17,15 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AdminProfilePage from './pages/AdminProfilePage';
 import Quiz from './components/tutorials/Quiz';
-import AdvertisementsPage from './pages/advertisement/AdvertisementsPage';
-import CreateAdvertisement from './pages/advertisement/CreateAdvertisement';
-import EditAdvertisement from './pages/advertisement/EditAdvertisement';
-import PostDashboardPage from './pages/post management/PostDashboardPage';
+import AdvertisementsPage from './pages/AdvertisementsPage';
+import PostDashboardPage from './pages/postManagement/PostDashboardPage';
+import UserPostsPage from './pages/postManagement/UserPostsPage';
+import CommunityPage from './pages/community/CommunityPage';
+import ManageCommunityPostsPage from './pages/community/ManageCommunityPostsPage';
 
 function ProtectedRoute({ children, roles }) {
   const { user } = useAuth();
-  if (!user) return <Navigate to="/" />;
+  if (!user) return <Navigate to="/postManagement/PostDashboardPage" />;  // Redirect to post page
   if (roles && !roles.includes(user.role)) return <Navigate to="/" />;
   return children;
 }
@@ -40,14 +41,13 @@ function App() {
             <main className="flex-grow">
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/PostDashboardPage" element={<PostDashboardPage />} />
-
-
+                <Route path="/postManagement/PostDashboardPage" element={<ProtectedRoute roles={['USER']}><PostDashboardPage /></ProtectedRoute>} />
+                <Route path="/postManagement/user-posts" element={<ProtectedRoute roles={['USER']}><UserPostsPage /></ProtectedRoute>} />
+                <Route path="/community" element={<ProtectedRoute roles={['USER']}><CommunityPage /></ProtectedRoute>} />
+                <Route path="/community/manage" element={<ProtectedRoute roles={['USER']}><ManageCommunityPostsPage /></ProtectedRoute>} />
                 <Route path="/advertisements" element={<AdvertisementsPage />} />
-                <Route path="/advertisements/new" element={<CreateAdvertisement />} />
-                <Route path="/advertisements/edit/:adId" element={<EditAdvertisement />} />
-
-                
+                <Route path="/advertisements/new" element={<AdvertisementsPage />} />
+                <Route path="/advertisements/edit/:adId" element={<AdvertisementsPage />} />
                 <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/user/login" element={<UserLogin />} />
                 <Route path="/admin/register" element={<AdminRegister />} />
