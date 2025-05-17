@@ -52,9 +52,9 @@ function Navbar() {
               <>
                 <Link to="/dashboard" className="text-white hover:text-cyan-400">Dashboard</Link> {/* Updated */}
                 <Link to="/tutorials" className="text-white hover:text-cyan-400">Tutorials</Link>
-                <Link to="/postManagement/user-posts" className="text-white hover:text-cyan-400">Manage My Posts</Link> {/* add a new button to mange the own post */}
+                <Link to="/postManagement/user-posts" className="text-white hover:text-cyan-400">Manage Posts</Link> {/* add a new button to mange the own post */}
                 <Link to="/community" className="text-white hover:text-cyan-400">Community</Link>
-                <Link to="/community/manage" className="text-white hover:text-cyan-400">Manage Community Posts</Link>
+                <Link to="/community/manage" className="text-white hover:text-cyan-400">Manage Community</Link>
                 <Link to="/advertisements" className="text-white hover:text-cyan-400">Advertisement</Link>
                 <Link to="/profile" className="flex items-center">
                   <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-white font-bold">
