@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { fetchUserAdvertisements, updateAdvertisement } from '../../service/api';
+import { fetchUserAdvertisements, updateAdvertisement } from '../../services/advertisementsService';
 
 function EditAdvertisement() {
   const { user, token } = useAuth();
@@ -55,8 +55,7 @@ function EditAdvertisement() {
     fetchAdForEdit();
   }, [user, token, navigate, adId]);
 
-  const handleAdSubmit = async (e) => {
-    e.preventDefault();
+  const handleAdSubmit = async () => {
     if (!adForm.title.trim() || !adForm.description.trim() || !adForm.category.trim() || !adForm.referenceName.trim()) {
       Swal.fire({
         title: 'Error',
@@ -116,7 +115,7 @@ function EditAdvertisement() {
   return (
     <div className="container mx-auto p-8">
       <h2 className="text-3xl font-bold text-cyan-400 mb-6">Edit Advertisement</h2>
-      <form onSubmit={handleAdSubmit} className="max-w-md mx-auto bg-gray-800 p-6 rounded-lg shadow-lg">
+      <div className="max-w-md mx-auto bg-gray-800 p-6 rounded-lg shadow-lg">
         <div className="mb-4">
           <label htmlFor="title" className="block text-gray-300 mb-2">Title</label>
           <input
@@ -177,19 +176,18 @@ function EditAdvertisement() {
           />
         </div>
         <button
-          type="submit"
+          onClick={handleAdSubmit}
           className="w-full p-3 rounded bg-cyan-500 text-white font-semibold hover:bg-cyan-600"
         >
           Update Advertisement
         </button>
         <button
-          type="button"
           onClick={() => navigate('/advertisements')}
           className="w-full mt-2 p-3 rounded bg-gray-600 text-white font-semibold hover:bg-gray-700"
         >
           Cancel
         </button>
-      </form>
+      </div>
     </div>
   );
 }

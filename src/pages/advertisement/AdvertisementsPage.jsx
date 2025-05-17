@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import { fetchAllAdvertisements, deleteAdvertisement } from '../../service/api';
+import { fetchAllAdvertisements, deleteAdvertisement } from '../../services/advertisementsService';
 
 function AdvertisementsPage() {
   const { user, token } = useAuth();
@@ -26,7 +26,7 @@ function AdvertisementsPage() {
           title: 'Failed to load advertisements',
           text: err.message,
           icon: 'error',
-          draggable: true
+          draggable: true,
         });
         setError('Failed to load advertisements');
       } finally {
@@ -84,6 +84,7 @@ function AdvertisementsPage() {
         className="inline-block mb-6 px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
       >
         Create New Advertisement
+        console.log('Navigating to create new advertisement');
       </button>
       <div className="grid gap-6">
         {ads.length > 0 ? (
