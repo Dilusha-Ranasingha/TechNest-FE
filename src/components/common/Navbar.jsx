@@ -56,7 +56,6 @@ function Navbar() {
                 <Link to="/community" className="text-white hover:text-cyan-400">Community</Link>
                 <Link to="/community/manage" className="text-white hover:text-cyan-400">Manage Community Posts</Link>
                 <Link to="/advertisements" className="text-white hover:text-cyan-400">Advertisement</Link>
-                <Link to="/feed" className="text-white hover:text-cyan-400">Feed</Link>
                 <Link to="/profile" className="flex items-center">
                   <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-white font-bold">
                     {getFirstLetter()}
