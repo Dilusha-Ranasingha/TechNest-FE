@@ -62,7 +62,7 @@ function Dashboard() {
     <div className="container mx-auto p-8">
       <h2 className="text-3xl font-bold text-cyan-400 mb-8">Dashboard</h2>
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
-        <h3 className="text-2xl font-bold text-white mb-4">Recent Activity</h3>
+        {/* <h3 className="text-2xl font-bold text-white mb-4">Recent Activity</h3>
         {activity.length > 0 ? (
           <ul className="space-y-2">
             {activity.map((item) => (
@@ -73,7 +73,7 @@ function Dashboard() {
           </ul>
         ) : (
           <p className="text-gray-400">No recent activity available.</p>
-        )}
+        )} */}
       </div>
       <MyLibrary progressData={progressData} />
     </div>

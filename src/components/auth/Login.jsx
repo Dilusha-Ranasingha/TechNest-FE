@@ -22,7 +22,7 @@ function Login({ role }) {
         showConfirmButton: false,
         timer: 1500
       });
-      navigate('/postManagement/PostDashboardPage');    // Redirect to the post dashboard page after login
+      navigate('/dashboard');
     } else {
       Swal.fire({
         title: "Invalid credentials",
@@ -34,14 +34,16 @@ function Login({ role }) {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const response = await axios.post('http://localhost:8080/login/oauth2/code/google', {
+      const response = await axios.post('http://localhost:8080/api/auth/oauth/google', {
         credential: credentialResponse.credential
+      }, {
+        headers: { 'Content-Type': 'application/json' }
       });
-      const { token, role: userRole, email: userEmail } = response.data;
+      const { token, role: userRole, email } = response.data;
       localStorage.setItem('token', token);
       localStorage.setItem('role', userRole);
-      localStorage.setItem('email', userEmail);
-      login(userEmail, null, userRole); // Password not needed for OAuth
+      localStorage.setItem('email', email);
+      // Skip the login call for OAuth2, as authentication is already handled
       Swal.fire({
         position: "top-end",
         icon: "success",
@@ -49,10 +51,11 @@ function Login({ role }) {
         showConfirmButton: false,
         timer: 1500
       });
-      navigate('/dashboard');
+      navigate('/profile'); // Navigate directly to profile
     } catch (error) {
       Swal.fire({
         title: "Google login failed",
+        text: error.response?.data?.error || "An error occurred",
         icon: "error",
         draggable: true
       });
